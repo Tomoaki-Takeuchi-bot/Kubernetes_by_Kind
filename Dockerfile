@@ -1,10 +1,19 @@
-FROM centos:7
+FROM alpine:3.9
 
-COPY . /tmp/debug
+COPY docker-entrypoint.sh /usr/local/bin
+
+# ユーザー追加、実行可能権限、Mongodb使用ディレクトリ追加
 RUN \
-  mv /tmp/debug/mongodb-org-4.0.repo /etc/yum.repos.d; \
-  yum install -y mongodb-org-shell-4.0.5 mongodb-org-tools-4.0.5; \
-  yum install -y iproute net-tools; \
-  curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64; \
-  chmod +x /usr/local/bin/jq; \
-  yum clean all;
+  adduser -g mongodb -DH -u 1000 mongodb; \
+  apk --no-cache add mongodb=4.0.5-r0; \
+  chmod +x /usr/local/bin/docker-entrypoint.sh; \
+  mkdir -p /data/db; \
+  chown -R mongodb:mongodb /data/db;
+
+# volume,exposeでDockerイメージを使用していることを宣言
+VOLUME /data/db
+
+EXPOSE 27017
+
+ENTRYPOINT [ "docker-entrypoint.sh" ]
+CMD [ "mongod" ]
