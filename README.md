@@ -37,11 +37,3 @@ kind での Dockerimage の反映は専用コマンドが必要<br>
 
 - ローカルからのイメージ取得（Dockerimage)<br>
   `kind load docker-image {{*サンプル例:debug}} from host into nodes`
-
-### debug ポッドの作成
-
-- Dockerimage 作成
-  `docker build -t debug .` にて作成
-- Docker container 削除
-  `docker container prune`
--
